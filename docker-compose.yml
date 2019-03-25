@@ -1,0 +1,32 @@
+version: '2'
+services:
+  php:
+    build: docker/php
+    volumes:
+     - .:/var/www
+    links:
+      - db
+  redis:
+    image: redis:latest
+    links:
+      - php
+    ports:
+     - "6379"
+  nginx:
+    build: docker/nginx
+    ports:
+     - "80:80"
+    volumes:
+     - .:/var/www
+    links:
+     - php
+    depends_on:
+     - php
+  db:
+    ports:
+     - "3366:3366"
+    image: mariadb:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=docker
+
